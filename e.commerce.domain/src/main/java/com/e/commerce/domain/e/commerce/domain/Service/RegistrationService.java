@@ -3,6 +3,7 @@ package com.e.commerce.domain.e.commerce.domain.Service;
 import com.e.commerce.domain.e.commerce.domain.config.UserDetailsServiceImpl;
 import com.e.commerce.domain.e.commerce.domain.email.EmailSender;
 import com.e.commerce.domain.e.commerce.domain.repo.userRepo;
+import com.e.commerce.domain.e.commerce.domain.table.user.Customer;
 import com.e.commerce.domain.e.commerce.domain.table.user.Seller;
 import com.e.commerce.domain.e.commerce.domain.table.user.User;
 import com.e.commerce.domain.e.commerce.domain.token.confirmationToken;
@@ -23,9 +24,6 @@ import java.util.UUID;
 public class RegistrationService {
 
 
-//    @Autowired
-//    private final EmailValidator emailValidator;
-
     @Autowired
     userRepo repo;
 
@@ -41,17 +39,12 @@ public class RegistrationService {
     @Autowired
     UserDetailsServiceImpl detailsService;
 
-
-
     @Autowired
     EmailValidator emailValidator;
 
-//    private final AppUserService appUserService;
-//    private final EmailValidator emailValidator;
-//    private final ConfirmationTokenService confirmationTokenService;
-//    private final EmailSender emailSender;
 
-    public String register(Seller seller) throws IllegalAccessException {
+//--------------------------------Seller Registration--------------------------------------
+    public String registerSeller(Seller seller) throws IllegalAccessException {
         List<User> users = repo.findAll();
 
         for (User user : users) {
@@ -67,7 +60,7 @@ public class RegistrationService {
         confirmationToken confer_Token = new confirmationToken(
                 token,
                 LocalDateTime.now(),
-                LocalDateTime.now().plusSeconds(15),
+                LocalDateTime.now().plusHours(3),
                 seller
         );
         tokenService.saveConfirmationToken(confer_Token);
@@ -75,10 +68,42 @@ public class RegistrationService {
         //ToDo email
         String link = "http://localhost:8080/api/v1/registration/confirm?token=" + token;
 
-      tokenService.saveConfirmationToken(confer_Token);
+    //  tokenService.saveConfirmationToken(confer_Token);
         emailSender.send(
                 seller.getEmail(),
                 buildEmail(seller.getFirstName(), link));
+
+        return token;
+    }
+    //--------------------------------Customer Registration--------------------------------------
+    public String registerCustomer(Customer customer) throws IllegalAccessException {
+        List<User> users = repo.findAll();
+
+        for (User user : users) {
+            if (user.getEmail().equals(customer.getEmail())) {
+                throw new IllegalAccessException("Email already present");
+            }
+        }
+        customer.setPassword(passwordEncoder.encode(customer.getPassword()));
+        repo.save(customer);
+
+
+        String token = UUID.randomUUID().toString();
+        confirmationToken confer_Token1 = new confirmationToken(
+                token,
+                LocalDateTime.now(),
+                LocalDateTime.now().plusHours(3),
+                customer
+        );
+        tokenService.saveConfirmationToken(confer_Token1);
+
+        //ToDo email
+        String link = "http://localhost:8080/api/v1/registration/confirm?token=" + token;
+
+       // tokenService.saveConfirmationToken(confer_Token1);
+        emailSender.send(
+                customer.getEmail(),
+                buildEmail(customer.getFirstName(), link));
 
         return token;
     }
@@ -102,8 +127,7 @@ public class RegistrationService {
         }
 
         tokenService.setConfirmedAt(token);
-        detailsService.enableUser(
-                confirmation_Token.getSeller().getEmail());
+        detailsService.enableUser(confirmation_Token.getUser().getEmail());
         return "confirmed";
     }
 
@@ -163,7 +187,7 @@ public class RegistrationService {
                 "      <td width=\"10\" valign=\"middle\"><br></td>\n" +
                 "      <td style=\"font-family:Helvetica,Arial,sans-serif;font-size:19px;line-height:1.315789474;max-width:560px\">\n" +
                 "        \n" +
-                "            <p style=\"Margin:0 0 20px 0;font-size:19px;line-height:25px;color:#0b0c0c\">Hi " + name + ",</p><p style=\"Margin:0 0 20px 0;font-size:19px;line-height:25px;color:#0b0c0c\"> Thank you for registering. Please click on the below link to activate your account: </p><blockquote style=\"Margin:0 0 20px 0;border-left:10px solid #b1b4b6;padding:15px 0 0.1px 15px;font-size:19px;line-height:25px\"><p style=\"Margin:0 0 20px 0;font-size:19px;line-height:25px;color:#0b0c0c\"> <a href=\"" + link + "\">Activate Now</a> </p></blockquote>\n Link will expire in 15 Second. <p>See you soon at Website</p>" +
+                "            <p style=\"Margin:0 0 20px 0;font-size:19px;line-height:25px;color:#0b0c0c\">Hi " + name + ",</p><p style=\"Margin:0 0 20px 0;font-size:19px;line-height:25px;color:#0b0c0c\"> Thank you for registering. Please click on the below link to activate your account: </p><blockquote style=\"Margin:0 0 20px 0;border-left:10px solid #b1b4b6;padding:15px 0 0.1px 15px;font-size:19px;line-height:25px\"><p style=\"Margin:0 0 20px 0;font-size:19px;line-height:25px;color:#0b0c0c\"> <a href=\"" + link + "\">Activate Now</a> </p></blockquote>\n Link will expire in 3 Hour. <p>See you soon </p>" +
                 "        \n" +
                 "      </td>\n" +
                 "      <td width=\"10\" valign=\"middle\"><br></td>\n" +

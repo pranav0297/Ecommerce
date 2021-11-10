@@ -21,4 +21,8 @@ public interface confirmationTokenRepo extends JpaRepository<confirmationToken,L
             "WHERE c.token = ?1")
     int updateConfirmedAt(String token,
                           LocalDateTime confirmedAt);
+
+
+
+
 }

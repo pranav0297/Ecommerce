@@ -1,5 +1,6 @@
 package com.e.commerce.domain.e.commerce.domain.token;
 
+import com.e.commerce.domain.e.commerce.domain.table.user.Customer;
 import com.e.commerce.domain.e.commerce.domain.table.user.Seller;
 import com.e.commerce.domain.e.commerce.domain.table.user.User;
 import lombok.Getter;
@@ -15,11 +16,6 @@ import java.time.LocalDateTime;
 @Entity
 public class confirmationToken {
 
-//    @SequenceGenerator(
-//            name = "confirmation_token_sequence",
-//            sequenceName = "confirmation_token_sequence",
-//            allocationSize = 1
-//    )
     @Id
     @GeneratedValue(
             strategy = GenerationType.SEQUENCE,
@@ -40,16 +36,30 @@ public class confirmationToken {
 
     @ManyToOne
     @JoinColumn(name = "user_id")
-    private Seller seller;
+    private User user;
+
+//    @ManyToOne
+//    @JoinColumn(name = "user_id")
+//    private Customer customer;
 
     public confirmationToken(String token,
                              LocalDateTime createdAt,
                              LocalDateTime expiresAt,
-                             Seller seller) {
+                             User user) {
         this.token = token;
         this.createdAt = createdAt;
         this.expiresAt = expiresAt;
-        this.seller=seller;
+        this.user=user;
     }
+
+//    public confirmationToken(String token,
+//                             LocalDateTime createdAt,
+//                             LocalDateTime expiresAt,
+//                             Customer customer) {
+//        this.token = token;
+//        this.createdAt = createdAt;
+//        this.expiresAt = expiresAt;
+//        this.customer=customer;
+//    }
 
 }

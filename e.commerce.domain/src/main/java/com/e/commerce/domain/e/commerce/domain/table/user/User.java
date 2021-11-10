@@ -31,7 +31,7 @@ public  class User implements UserDetails {
     @NotNull
     private String email;
 
-    @NotNull
+    //@NotNull
     @Column(name = "first_name")
     private String firstName;
 
@@ -39,7 +39,7 @@ public  class User implements UserDetails {
     @Column(name = "middle_name")
     private String middleName;
 
-    @NotNull
+   // @NotNull
     @Column(name = "last_name")
     private String lastName;
 
@@ -58,7 +58,12 @@ public  class User implements UserDetails {
     private boolean isLocked;
 
     @Column(name = "invalid_attempt_count")
-    private int invalidAttemptCount;
+    private int invalid_attempt_count;
+
+    @Column(name = "is_enable")
+    private boolean isEnable;
+
+
 
     @OneToMany(targetEntity = UserAddress.class,cascade =CascadeType.ALL)
     @JoinColumn(name = "user_id",referencedColumnName="id")
@@ -78,7 +83,8 @@ public  class User implements UserDetails {
                 String lastName, String password,
                 boolean isDeleted, boolean isActive,
                 boolean isExpired, boolean isLocked,
-                int invalidAttemptCount,
+                int invalid_attempt_count,
+               boolean isEnable,
                List<UserAddress>address, List<Role> role) {
        //super();
         this.id = id;
@@ -91,7 +97,8 @@ public  class User implements UserDetails {
         this.isActive = isActive;
         this.isExpired = isExpired;
         this.isLocked = isLocked;
-        this.invalidAttemptCount = invalidAttemptCount;
+        this.invalid_attempt_count = invalid_attempt_count;
+        this.isEnable=isEnable;
         this.address = address;
         this.role = role;
     }
@@ -188,9 +195,11 @@ public  class User implements UserDetails {
         return true;
     }
 
+
+
     @Override
     public boolean isEnabled() {
-        return true;
+        return false;
     }
 
     public void setPassword(String password) {
@@ -208,6 +217,7 @@ public  class User implements UserDetails {
     public boolean isActive() {
         return isActive;
     }
+
 
     public void setActive(boolean active) {
         isActive = active;
@@ -229,12 +239,16 @@ public  class User implements UserDetails {
         isLocked = locked;
     }
 
-    public int getInvalidAttemptCount() {
-        return invalidAttemptCount;
+    public int getInvalid_attempt_count() {
+        return invalid_attempt_count;
     }
 
-    public void setInvalidAttemptCount(int invalidAttemptCount) {
-        this.invalidAttemptCount = invalidAttemptCount;
+    public void setInvalid_attempt_count(int invalid_attempt_count) {
+        this.invalid_attempt_count = invalid_attempt_count;
+    }
+
+    public boolean isEnable() {
+        return isEnable;
     }
 
     public List<UserAddress> getAddress() {
@@ -266,7 +280,7 @@ public  class User implements UserDetails {
                 ", isActive=" + isActive +
                 ", isExpired=" + isExpired +
                 ", isLocked=" + isLocked +
-                ", invalidAttemptCount=" + invalidAttemptCount +
+                ", invalid_attempt_count=" + invalid_attempt_count +
                 ", address=" + address +
                 ", role=" + role +
                 '}';

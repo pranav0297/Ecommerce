@@ -1,8 +1,8 @@
 package com.e.commerce.domain.e.commerce.domain.controller;
 
 
-import com.e.commerce.domain.e.commerce.domain.Service.RegistrationRequest;
 import com.e.commerce.domain.e.commerce.domain.Service.RegistrationService;
+import com.e.commerce.domain.e.commerce.domain.table.user.Customer;
 import com.e.commerce.domain.e.commerce.domain.table.user.Seller;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,9 +16,19 @@ public class RegistrationController {
     @Autowired
     private final RegistrationService registrationService;
 
-    @PostMapping
-    public String register(@RequestBody Seller seller) throws IllegalAccessException {
-        return registrationService.register(seller);
+
+
+    //Seller Register
+    @PostMapping(path = "seller")
+    public String registerSeller(@RequestBody Seller seller) throws IllegalAccessException {
+        return registrationService.registerSeller(seller);
+    }
+
+
+    //Customer Register
+    @PostMapping(path = "customer")
+    public String registerCustomer(@RequestBody Customer customer) throws IllegalAccessException {
+        return registrationService.registerCustomer(customer);
     }
 
     @GetMapping(path = "confirm")
